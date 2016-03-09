@@ -1,0 +1,25 @@
+[DockerLogsInput]
+type = "DockerLogInput"
+endpoint = "unix:///var/run/docker.sock"
+decoder = "DockerDecoder"
+can_exit = true
+
+[DockerDecoder]
+type = "PayloadRegexDecoder"
+match_regex = "(?P<message>.*) (?P<custom>.*)"
+
+[DockerDecoder.message_fields]
+message = "%message%"
+additional_field = "%custom%"
+
+[ESJsonEncoder]
+index = "hekad-%{2006.01.02}"
+es_index_from_timestamp = true
+type_name = "%{Logger}"
+
+[ElasticSearchOutput]
+message_matcher = "TRUE"
+server = "%ENV[ELS_ENDPOINT]"
+flush_interval = 5000
+flush_count = 10
+encoder = "ESJsonEncoder"

@@ -24,7 +24,7 @@ filename = "lua_decoders/json.lua"
 type = "PayloadRegexDecoder"
 match_regex = "(?P<message>.*)"
 
-	[DockerDecoder.message_fields]
+	[RegexDecoder.message_fields]
 	message = "%message%"
 
 

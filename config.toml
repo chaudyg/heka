@@ -1,15 +1,29 @@
 [DockerLogsInput]
 type = "DockerLogInput"
 endpoint = "unix:///var/run/docker.sock"
-decoder = "DockerDecoder"
+decoder = "MultiDecoder"
 can_exit = true
 
-[DockerDecoder]
-type = "PayloadRegexDecoder"
-match_regex = "(?P<message>.*)"
 
-[DockerDecoder.message_fields]
-message = "%message%"
+[MultiDecoder]
+type = "MultiDecoder"
+subs = ['JsonDecoder', 'RegexDecoder']
+cascade_strategy = "first-wins"
+log_sub_errors = true
+
+
+[JsonDecoder]
+type = "SandboxDecoder"
+filename = "lua_decoders/json.lua"
+
+    [JsonDecoder.config]
+    payload_keep = true
+    map_fields = true
+
+[RegexDecoder]
+type = "PayloadRegexDecoder"
+match_regex = ".*"
+
 
 [ESJsonEncoder]
 index = "hekad-%{2006.01.02}"
@@ -19,6 +33,4 @@ type_name = "%{Logger}"
 [ElasticSearchOutput]
 message_matcher = "TRUE"
 server = "%ENV[ELS_ENDPOINT]"
-flush_interval = 5000
-flush_count = 10
 encoder = "ESJsonEncoder"

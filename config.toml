@@ -6,11 +6,10 @@ can_exit = true
 
 [DockerDecoder]
 type = "PayloadRegexDecoder"
-match_regex = "(?P<message>.*) (?P<custom>.*)"
+match_regex = "(?P<message>.*)"
 
 [DockerDecoder.message_fields]
 message = "%message%"
-additional_field = "%custom%"
 
 [ESJsonEncoder]
 index = "hekad-%{2006.01.02}"

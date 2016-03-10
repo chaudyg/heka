@@ -22,15 +22,18 @@ filename = "lua_decoders/json.lua"
 
 [RegexDecoder]
 type = "PayloadRegexDecoder"
-match_regex = ".*"
+match_regex = "(?P<message>.*)"
 
+	[DockerDecoder.message_fields]
+	message = "%message%"
 
-[ESJsonEncoder]
-index = "hekad-%{2006.01.02}"
-es_index_from_timestamp = true
-type_name = "%{Logger}"
 
 [ElasticSearchOutput]
 message_matcher = "TRUE"
 server = "%ENV[ELS_ENDPOINT]"
 encoder = "ESJsonEncoder"
+
+[ESJsonEncoder]
+index = "hekad-%{2006.01.02}"
+es_index_from_timestamp = true
+type_name = "%{Logger}"
